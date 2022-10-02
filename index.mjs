@@ -123,7 +123,13 @@ async function sh(cmd) {
   await new Promise((resolve, reject) => {
     exec(cmd, (err, stdout, stderr) => {
       if (err) return reject(err);
-      if (stderr) return reject(stderr);
+      if (
+        stderr &&
+        // TODO: successful "gpg --import" command writes to stderr 🤦‍♂️
+        !stderr.includes('secret key imported')
+      ) {
+        return reject(stderr);
+      }
       if (stdout) console.debug(`> ${stdout}`);
       resolve(void 0);
     });
