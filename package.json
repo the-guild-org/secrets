@@ -9,7 +9,8 @@
   "main": "index.mjs",
   "scripts": {
     "lint": "prettier -c .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "build": "node build.mjs"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.62",
+    "esbuild": "^0.15.10",
     "prettier": "^2.7.1",
     "typescript": "^4.8.4"
   }
