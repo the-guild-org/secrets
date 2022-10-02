@@ -2,7 +2,7 @@ name: The Guild Secrets
 description: "Reveal and use The Guild's secrets"
 
 runs:
-  using: node18
+  using: node16
   main: index.mjs
 
 inputs:
