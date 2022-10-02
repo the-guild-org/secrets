@@ -17,7 +17,7 @@ const SECRETS_DIR = path.join(
 
 async function main() {
   try {
-    fs.stat(GIT_SECRET_BIN);
+    await fs.stat(GIT_SECRET_BIN);
     console.debug(`git-secret@${GIT_SECRET_VER} already installed`);
   } catch {
     await install();
