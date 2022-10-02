@@ -52,14 +52,8 @@ async function main() {
 }
 
 main().catch((err) => {
-  if (github.context.runId) {
-    // running in GitHub Actions
-    core.setFailed(err.message);
-  } else {
-    // running on a local machine
-    console.error(err);
-    process.exit(1);
-  }
+  console.error(err);
+  process.exit(1);
 });
 
 //
