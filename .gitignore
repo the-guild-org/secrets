@@ -1,4 +1,5 @@
 .DS_Store
+.vscode
 .gitsecret/keys/random_seed
 secrets/*
 !secrets/*.secret
