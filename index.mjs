@@ -1,18 +1,18 @@
-import * as os from "os";
-import * as fs from "fs/promises";
-import * as path from "path";
-import * as url from "url";
-import { exec } from "child_process";
-import * as core from "@actions/core";
-import * as github from "@actions/github";
+import * as os from 'os';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as url from 'url';
+import { exec } from 'child_process';
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
-const GIT_SECRET_VER = "v0.5.0";
+const GIT_SECRET_VER = 'v0.5.0';
 const GIT_SECRET_DIR = path.join(os.tmpdir(), `git-secret_${GIT_SECRET_VER}`);
-const GIT_SECRET_BIN = path.join(GIT_SECRET_DIR, "git-secret");
+const GIT_SECRET_BIN = path.join(GIT_SECRET_DIR, 'git-secret');
 
 const SECRETS_DIR = path.join(
   path.dirname(url.fileURLToPath(import.meta.url)), // __dirname
-  "secrets"
+  'secrets',
 );
 
 async function main() {
@@ -23,24 +23,24 @@ async function main() {
     await install();
   }
 
-  const gpgKey = core.getInput("gpg-key");
+  const gpgKey = core.getInput('gpg-key');
   if (gpgKey) {
-    console.log("Importing provided GnuPG key");
+    console.log('Importing provided GnuPG key');
     await sh(`gpg --import ${gpgKey}`);
   }
 
-  console.debug("Removing already revealed secrets");
+  console.debug('Removing already revealed secrets');
   for (const file of await fs.readdir(SECRETS_DIR)) {
-    if (!file.endsWith(".secret")) {
+    if (!file.endsWith('.secret')) {
       // remove all non-secrets (cleanup if running on local machine)
       await fs.rm(path.join(SECRETS_DIR, file));
     }
   }
 
-  console.log("Processing secrets");
+  console.log('Processing secrets');
   await sh(`${GIT_SECRET_BIN} reveal`);
   for (const file of await fs.readdir(SECRETS_DIR)) {
-    if (!file.endsWith(".secret")) {
+    if (!file.endsWith('.secret')) {
       const secretBuf = await fs.readFile(path.join(SECRETS_DIR, file));
       const secret = secretBuf.toString();
       core.setSecret(secret);
@@ -72,7 +72,7 @@ async function install() {
     console.info(`Removing ${GIT_SECRET_DIR}`);
     await fs.rm(GIT_SECRET_DIR, { recursive: true });
   } catch (err) {
-    if (!String(err).includes("ENOENT")) {
+    if (!String(err).includes('ENOENT')) {
       throw err;
     }
   }
@@ -82,13 +82,13 @@ async function install() {
 
   console.info(`Downloading into ${GIT_SECRET_DIR}`);
   const res = await fetch(
-    `https://github.com/sobolevn/git-secret/archive/refs/tags/${GIT_SECRET_VER}.tar.gz`
+    `https://github.com/sobolevn/git-secret/archive/refs/tags/${GIT_SECRET_VER}.tar.gz`,
   );
   if (!res.ok) {
-    throw new Error("Unable to download");
+    throw new Error('Unable to download');
   }
 
-  const archive = path.join(GIT_SECRET_DIR, "archive.tar.gz");
+  const archive = path.join(GIT_SECRET_DIR, 'archive.tar.gz');
   await fs.writeFile(archive, Buffer.from(await res.arrayBuffer()));
 
   await sh(`tar -xf ${archive} -C ${GIT_SECRET_DIR} --strip-components=1`);
@@ -113,9 +113,9 @@ async function install() {
 export function getInputAsArray(name, options) {
   return core
     .getInput(name, options)
-    .split("\n")
+    .split('\n')
     .map((s) => s.trim())
-    .filter((x) => x !== "");
+    .filter((x) => x !== '');
 }
 
 /**

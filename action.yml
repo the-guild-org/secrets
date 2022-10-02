@@ -7,9 +7,9 @@ runs:
 
 inputs:
   gpg-key:
-    description: "The GnuPG key to import for using the secrets"
+    description: 'The GnuPG key to import for using the secrets'
     required: true
 
 outputs:
   secrets:
-    description: "A map of revealed secrets matching the requested secrets in the input"
+    description: 'A map of revealed secrets matching the requested secrets in the input'
