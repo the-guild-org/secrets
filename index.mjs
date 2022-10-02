@@ -1,7 +1,6 @@
 import * as os from 'os';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import * as url from 'url';
 import { exec } from 'child_process';
 import { fetch } from '@whatwg-node/fetch';
 import * as core from '@actions/core';
@@ -10,10 +9,7 @@ const GIT_SECRET_VER = 'v0.5.0';
 const GIT_SECRET_DIR = path.join(os.tmpdir(), `git-secret_${GIT_SECRET_VER}`);
 const GIT_SECRET_BIN = path.join(GIT_SECRET_DIR, 'git-secret');
 
-const SECRETS_DIR = path.join(
-  path.dirname(url.fileURLToPath(import.meta.url)), // __dirname
-  'secrets',
-);
+const SECRETS_REPO = 'git@github.com:the-guild-org/secrets.git';
 
 async function main() {
   try {
@@ -28,19 +24,25 @@ async function main() {
     await sh(`echo -n "${gpgKey}" | gpg --import`, 'gpg --import');
   }
 
-  console.debug('Removing already revealed secrets');
-  for (const file of await fs.readdir(SECRETS_DIR)) {
-    if (!file.endsWith('.secret')) {
-      // remove all non-secrets (cleanup if running on local machine)
-      await fs.rm(path.join(SECRETS_DIR, file));
+  console.info('Cloning secrets');
+  const secretsRepoDir = path.join(os.tmpdir(), 'the-guild-org-secrets');
+  try {
+    console.debug(`Removing ${secretsRepoDir}`);
+    await fs.rm(secretsRepoDir, { recursive: true });
+  } catch (err) {
+    if (!String(err).includes('ENOENT')) {
+      throw err;
     }
   }
+  await fs.mkdir(secretsRepoDir);
+  await sh(`git clone ${SECRETS_REPO} ${secretsRepoDir} --depth=1`);
 
-  console.log('Processing secrets');
-  await sh(`${GIT_SECRET_BIN} reveal`);
-  for (const file of await fs.readdir(SECRETS_DIR)) {
+  console.info('Processing secrets');
+  await sh(`cd ${secretsRepoDir} && ${GIT_SECRET_BIN} reveal`);
+  const secretsDir = path.join(secretsRepoDir, 'secrets');
+  for (const file of await fs.readdir(secretsDir)) {
     if (!file.endsWith('.secret')) {
-      const secretBuf = await fs.readFile(path.join(SECRETS_DIR, file));
+      const secretBuf = await fs.readFile(path.join(secretsDir, file));
       const secret = secretBuf.toString();
       core.setSecret(secret);
       core.setOutput(`secrets.${file}`, secret);
@@ -62,7 +64,7 @@ async function install() {
   console.info(`Installing git-secret@${GIT_SECRET_VER}`);
 
   try {
-    console.info(`Removing ${GIT_SECRET_DIR}`);
+    console.debug(`Removing ${GIT_SECRET_DIR}`);
     await fs.rm(GIT_SECRET_DIR, { recursive: true });
   } catch (err) {
     if (!String(err).includes('ENOENT')) {
@@ -70,18 +72,17 @@ async function install() {
     }
   }
 
-  console.info(`Making ${GIT_SECRET_DIR}`);
   await fs.mkdir(GIT_SECRET_DIR);
-
-  console.info(`Downloading into ${GIT_SECRET_DIR}`);
+  const archive = path.join(GIT_SECRET_DIR, 'archive.tar.gz');
+  console.debug(`Downloading into ${archive}`);
   const res = await fetch(
     `https://github.com/sobolevn/git-secret/archive/refs/tags/${GIT_SECRET_VER}.tar.gz`,
   );
   if (!res.ok) {
-    throw new Error('Unable to download');
+    throw new Error(
+      `Unable to download. Got response ${res.status}: ${res.statusText}`,
+    );
   }
-
-  const archive = path.join(GIT_SECRET_DIR, 'archive.tar.gz');
   await fs.writeFile(archive, Buffer.from(await res.arrayBuffer()));
 
   await sh(`tar -xf ${archive} -C ${GIT_SECRET_DIR} --strip-components=1`);
@@ -106,17 +107,8 @@ async function sh(cmd, cmdToLog) {
   await new Promise((resolve, reject) => {
     exec(cmd, (err, stdout, stderr) => {
       if (err) return reject(err);
-      if (stderr) {
-        if (
-          // TODO: successful "gpg --import" command writes to stderr 🤦‍♂️
-          stderr.includes('secret key imported')
-        ) {
-          console.debug(`> ${stderr}`);
-        } else {
-          return reject(stderr);
-        }
-      }
-      if (stdout) console.debug(`> ${stdout}`);
+      if (stdout) console.debug(`1> ${stdout}`);
+      if (stderr) console.debug(`2> ${stderr}`);
       resolve(void 0);
     });
   });
