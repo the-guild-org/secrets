@@ -5,13 +5,21 @@ import * as url from 'url';
 import { exec } from 'child_process';
 import { fetch } from '@whatwg-node/fetch';
 import * as core from '@actions/core';
+import * as github from '@actions/github';
+
+console.log({
+  // @ts-expect-error action_path should exist
+  action_path: github.context.action_path,
+});
 
 const GIT_SECRET_VER = 'v0.5.0';
 const GIT_SECRET_DIR = path.join(os.tmpdir(), `git-secret_${GIT_SECRET_VER}`);
 const GIT_SECRET_BIN = path.join(GIT_SECRET_DIR, 'git-secret');
 
 const SECRETS_DIR = path.join(
-  path.dirname(url.fileURLToPath(import.meta.url)), // __dirname
+  // @ts-expect-error action_path should exist in github context
+  github.context.action_path ||
+    path.dirname(url.fileURLToPath(import.meta.url)), // __dirname
   'secrets',
 );
 
