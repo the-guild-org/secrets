@@ -129,6 +129,7 @@ async function sh(cmd) {
   console.debug(`$ ${cmd}`);
   await new Promise((resolve, reject) => {
     exec(cmd, (err, stdout, stderr) => {
+      console.debug({ err, stdout, stderr });
       if (err) return reject(err);
       if (stderr) return reject(stderr);
       if (stdout) console.debug(`> ${stdout}`);
