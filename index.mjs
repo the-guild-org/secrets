@@ -103,7 +103,7 @@ async function install() {
  * @param {string} name
  * @param {core.InputOptions=} options
  */
-export function getInputAsArray(name, options) {
+function getInputAsArray(name, options) {
   return core
     .getInput(name, options)
     .split('\n')
