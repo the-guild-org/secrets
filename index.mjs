@@ -26,8 +26,7 @@ async function main() {
 
   const gpgKey = core.getInput('gpg-key');
   if (gpgKey) {
-    console.log('Importing provided GnuPG key');
-    await sh(`gpg --import ${gpgKey}`);
+    await sh(`echo ${gpgKey} | gpg --import`);
   }
 
   console.debug('Removing already revealed secrets');
