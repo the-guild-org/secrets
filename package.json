@@ -1,0 +1,21 @@
+{
+  "name": "secrets-action",
+  "repository": "git@github.com:the-guild-org/secrets.git",
+  "author": "Denis Badurina <badurinadenis@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "index.mjs",
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.23",
+    "typescript": "^4.8.4"
+  }
+}

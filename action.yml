@@ -1,0 +1,15 @@
+name: The Guild Secrets
+description: "Reveal and use The Guild's secrets"
+
+runs:
+  using: node18
+  main: index.mjs
+
+inputs:
+  gpg-key:
+    description: "The GnuPG key to import for using the secrets"
+    required: true
+
+outputs:
+  secrets:
+    description: "A map of revealed secrets matching the requested secrets in the input"
