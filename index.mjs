@@ -26,7 +26,9 @@ async function main() {
 
   const gpgKey = core.getInput('gpg-key');
   if (gpgKey) {
-    await sh(`echo ${gpgKey} | gpg --import`);
+    const gpgKeyFile = path.join(GIT_SECRET_DIR, 'gpg-key.asc');
+    await fs.writeFile(gpgKeyFile, gpgKey);
+    await sh(`gpg --import ${gpgKeyFile}`);
   }
 
   console.debug('Removing already revealed secrets');
