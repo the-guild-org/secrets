@@ -45,7 +45,7 @@ async function main() {
       const secretBuf = await fs.readFile(path.join(secretsDir, file));
       const secret = secretBuf.toString();
       core.setSecret(secret);
-      core.setOutput(`${file}`, secret);
+      core.setOutput(file, secret);
     }
   }
 }
