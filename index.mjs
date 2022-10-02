@@ -5,7 +5,6 @@ import * as url from 'url';
 import { exec } from 'child_process';
 import { fetch } from '@whatwg-node/fetch';
 import * as core from '@actions/core';
-import * as github from '@actions/github';
 
 const GIT_SECRET_VER = 'v0.5.0';
 const GIT_SECRET_DIR = path.join(os.tmpdir(), `git-secret_${GIT_SECRET_VER}`);
