@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as url from 'url';
 import { exec } from 'child_process';
+import { fetch } from '@whatwg-node/fetch';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
