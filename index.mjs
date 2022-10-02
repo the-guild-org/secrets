@@ -9,7 +9,7 @@ const GIT_SECRET_VER = 'v0.5.0';
 const GIT_SECRET_DIR = path.join(os.tmpdir(), `git-secret_${GIT_SECRET_VER}`);
 const GIT_SECRET_BIN = path.join(GIT_SECRET_DIR, 'git-secret');
 
-const SECRETS_REPO = 'git@github.com:the-guild-org/secrets.git';
+const SECRETS_REPO = 'https://github.com/the-guild-org/secrets.git';
 
 async function main() {
   try {
