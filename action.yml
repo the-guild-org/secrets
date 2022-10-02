@@ -9,7 +9,3 @@ inputs:
   gpg-key:
     description: 'The GnuPG key to import used for revealing the secrets'
     required: true
-
-outputs:
-  secrets:
-    description: 'A map of revealed secrets'
