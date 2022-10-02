@@ -58,6 +58,6 @@ jobs:
       - name: Check
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
-            echo "::error::Build created a different bundle from the commited one"
+            echo "::error::Build created a different bundle from the commited one. Did you forget to do `yarn build`?"
             exit 1
           fi
