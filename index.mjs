@@ -25,7 +25,9 @@ async function main() {
 
   const gpgKey = core.getInput('gpg-key');
   if (gpgKey) {
-    await sh(`echo -e "${gpgKey}" | gpg --import`);
+    const gpgKeyFile = path.join(os.tmpdir(), 'gpg-key');
+    await fs.writeFile(gpgKeyFile, gpgKey);
+    await sh(`gpg --import ${gpgKeyFile}`);
   }
 
   console.debug('Removing already revealed secrets');
@@ -120,7 +122,6 @@ async function sh(cmd) {
   console.debug(`$ ${cmd}`);
   await new Promise((resolve, reject) => {
     exec(cmd, (err, stdout, stderr) => {
-      console.debug({ err, stdout, stderr });
       if (err) return reject(err);
       if (stderr) return reject(stderr);
       if (stdout) console.debug(`> ${stdout}`);
