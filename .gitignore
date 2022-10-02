@@ -3,4 +3,3 @@
 .gitsecret/keys/random_seed
 secrets/*
 !secrets/*.secret
-node_modules
