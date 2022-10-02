@@ -96,22 +96,6 @@ async function install() {
 }
 
 /**
- * Gets the GitHub Actions input and parses it as an array.
- *
- * Reference: https://github.com/actions/cache/blob/515d10b4fd9bb4858066bd5769f55bd498dcdd27/src/utils/actionUtils.ts#L49-L58
- *
- * @param {string} name
- * @param {core.InputOptions=} options
- */
-function getInputAsArray(name, options) {
-  return core
-    .getInput(name, options)
-    .split('\n')
-    .map((s) => s.trim())
-    .filter((x) => x !== '');
-}
-
-/**
  * Execute a shell command.
  *
  * @param {string} cmd
