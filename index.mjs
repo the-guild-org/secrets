@@ -25,7 +25,7 @@ async function main() {
 
   const gpgKey = core.getInput('gpg-key');
   if (gpgKey) {
-    await sh(`echo -n "${gpgKey}" | gpg --import`);
+    await sh(`echo -n "${gpgKey}" | gpg --import`, 'gpg --import');
   }
 
   console.debug('Removing already revealed secrets');
@@ -115,9 +115,10 @@ export function getInputAsArray(name, options) {
  * Execute a shell command.
  *
  * @param {string} cmd
+ * @param {string=} cmdToLog The command to log in case the `cmd` is too long or contains sensitive data.
  */
-async function sh(cmd) {
-  console.debug(`$ ${cmd}`);
+async function sh(cmd, cmdToLog) {
+  console.debug(`$ ${cmdToLog || cmd}`);
   await new Promise((resolve, reject) => {
     exec(cmd, (err, stdout, stderr) => {
       if (err) return reject(err);
