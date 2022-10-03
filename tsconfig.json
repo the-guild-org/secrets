@@ -8,5 +8,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "exclude": ["dist"]
+  "exclude": ["bundle.mjs"]
 }

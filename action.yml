@@ -3,7 +3,7 @@ description: "Reveal and use The Guild's secrets"
 
 runs:
   using: node16
-  main: dist/index.mjs
+  main: bundle.mjs
 
 inputs:
   gpg-key:
